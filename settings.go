@@ -161,7 +161,7 @@ func bootStateMachine(in *dt.Msg) *dt.StateMachine {
 var addCard []dt.State = []dt.State{
 	{
 		OnEntry: func(in *dt.Msg) string {
-			url := path.Join(os.Getenv("BASE_URL"), "cards", "new")
+			url := path.Join(os.Getenv("ABOT_URL"), "cards", "new")
 			return "You can add your card securely here: " + url
 		}, OnInput: func(in *dt.Msg) {
 		},
@@ -174,7 +174,7 @@ var addCard []dt.State = []dt.State{
 var changeCalendar []dt.State = []dt.State{
 	{
 		OnEntry: func(in *dt.Msg) string {
-			url := path.Join(os.Getenv("BASE_URL"), "profile")
+			url := path.Join(os.Getenv("ABOT_URL"), "profile")
 			return "You can connect your Google calendar on your profile: " + url
 		},
 		OnInput: func(in *dt.Msg) {
@@ -188,7 +188,7 @@ var changeCalendar []dt.State = []dt.State{
 var changeCard []dt.State = []dt.State{
 	{
 		OnEntry: func(in *dt.Msg) string {
-			url := path.Join(os.Getenv("BASE_URL"), "profile")
+			url := path.Join(os.Getenv("ABOT_URL"), "profile")
 			return "You can change your cards securely here: " + url
 		}, OnInput: func(in *dt.Msg) {
 		},
