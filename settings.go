@@ -8,11 +8,11 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/itsabot/abot/shared/datatypes"
+	"github.com/itsabot/abot/shared/nlp"
+	"github.com/itsabot/abot/shared/pkg"
+	"github.com/itsabot/abot/shared/task"
 	"github.com/jmoiron/sqlx"
-	"itsabot.org/abot/shared/datatypes"
-	"itsabot.org/abot/shared/nlp"
-	"itsabot.org/abot/shared/pkg"
-	"itsabot.org/abot/shared/task"
 )
 
 type Settings string
