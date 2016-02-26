@@ -7,8 +7,8 @@ import (
 	"path"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/itsabot/abot/shared/datatypes"
+	"github.com/itsabot/abot/shared/log"
 	"github.com/itsabot/abot/shared/nlp"
 	"github.com/itsabot/abot/shared/pkg"
 	"github.com/itsabot/abot/shared/task"
@@ -20,7 +20,7 @@ type Settings string
 var vocab dt.Vocab
 var db *sqlx.DB
 var p *pkg.Pkg
-var l *log.Entry
+var l *log.Logger
 
 const pkgName string = "settings"
 const (
@@ -36,13 +36,12 @@ func main() {
 	flag.StringVar(&coreaddr, "coreaddr", "",
 		"Port used to communicate with Abot.")
 	flag.Parse()
-	log.SetLevel(log.DebugLevel)
-	l = log.WithFields(log.Fields{"pkg": pkgName})
+	l = log.New(pkgName)
 	rand.Seed(time.Now().UnixNano())
 	var err error
 	db, err = pkg.ConnectDB()
 	if err != nil {
-		l.Fatalln(err)
+		l.Fatal(err)
 	}
 	trigger := &nlp.StructuredInput{
 		Commands: []string{"change", "modify", "switch", "alter", "add",
@@ -51,7 +50,7 @@ func main() {
 	}
 	p, err = pkg.NewPackage(pkgName, coreaddr, trigger)
 	if err != nil {
-		l.Fatalln("building", err)
+		l.Fatal("building", err)
 	}
 	p.Vocab = dt.NewVocab(
 		// TODO change handlers to use triggers
@@ -79,7 +78,7 @@ func main() {
 	)
 	settings := new(Settings)
 	if err := p.Register(settings); err != nil {
-		l.Fatalln("registering", err)
+		l.Fatal("registering", err)
 	}
 }
 
@@ -106,19 +105,19 @@ func handleInput(in *dt.Msg, resp *string) error {
 		state := int(sm.GetMemory(in, "state").Int64())
 		switch state {
 		case stateAddCard:
-			l.Debugln("setting state addCard")
+			l.Debug("setting state addCard")
 			sm.SetStates(addCard)
 		case stateChangeCard:
-			l.Debugln("setting state changeCard")
+			l.Debug("setting state changeCard")
 			sm.SetStates(changeCard)
 		case stateChangeCalendar:
-			l.Debugln("setting state changeCalendar")
+			l.Debug("setting state changeCalendar")
 			sm.SetStates(changeCalendar)
 		case stateAddAddress:
-			l.Debugln("setting state changeCalendar")
+			l.Debug("setting state changeCalendar")
 			sm.SetStates(addShippingAddress(in))
 		default:
-			l.Warnln("unrecognized state", state)
+			l.Debug("unrecognized state", state)
 		}
 		*resp = sm.Next(in)
 	}
@@ -128,7 +127,6 @@ func handleInput(in *dt.Msg, resp *string) error {
 func kwAddCard(in *dt.Msg, _ int) string {
 	sm := bootStateMachine(in)
 	sm.SetMemory(in, "state", stateAddCard)
-	l.Warnln("kwAddCard hit")
 	return ""
 }
 
